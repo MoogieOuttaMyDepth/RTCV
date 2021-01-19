@@ -168,7 +168,7 @@ namespace RTCV.UI.Components.Controls
                 {
                     var holder = (SavestateHolder)((Button)sender).Parent;
                     var indexToRemove = _controlList.IndexOf(holder) + _dataSource.Position;
-                    if (indexToRemove <= _dataSource.Count)
+                    if (indexToRemove <= _dataSource.Count && indexToRemove > -1)
                     {
                         _dataSource.RemoveAt(indexToRemove);
                     }
