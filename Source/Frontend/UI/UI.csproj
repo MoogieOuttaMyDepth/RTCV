@@ -49,15 +49,11 @@
     <Compile Update="Components\Controls\InputCompositeWidget.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Components\Controls\InputWidget.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Update="Components\Controls\InputWidget.cs" />
     <Compile Update="Components\Controls\ListBoxExtended.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Update="Components\Controls\MultiTrackBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Components\Controls\MultiTrackBar.cs" />
     <Compile Update="Components\Controls\MultiUpDown.cs">
       <SubType>UserControl</SubType>
     </Compile>
