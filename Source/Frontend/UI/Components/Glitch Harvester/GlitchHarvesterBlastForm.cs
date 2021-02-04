@@ -305,7 +305,7 @@ namespace RTCV.UI
             SendRawToStash(null, null);
         }
 
-        private void OnCorruptButtonMouseDown(object sender, MouseEventArgs e)
+        public void btnCorrupt_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -418,9 +418,9 @@ namespace RTCV.UI
                 {
                     StockpileManagerUISide.CurrentStashkey = (StashKey)StockpileManagerUISide.StashHistory[S.GET<StashHistoryForm>().lbStashHistory.SelectedIndex].Clone();
                 }
-                else if (S.GET<StockpileManagerForm>().dgvStockpile.SelectedRows.Count != 0 && S.GET<StockpileManagerForm>().dgvStockpile.SelectedRows[0].Cells[0].Value != null)
+                else if (S.GET<StockpileManagerForm>().dgvStockpile.SelectedRows.Count != 0 && S.GET<StockpileManagerForm>().GetSelectedStashKey() != null)
                 {
-                    StockpileManagerUISide.CurrentStashkey = (StashKey)(S.GET<StockpileManagerForm>().dgvStockpile.SelectedRows[0].Cells[0].Value as StashKey)?.Clone();
+                    StockpileManagerUISide.CurrentStashkey = (StashKey)S.GET<StockpileManagerForm>().GetSelectedStashKey()?.Clone();
                     //StockpileManager_UISide.unsavedEdits = true;
                 }
                 else

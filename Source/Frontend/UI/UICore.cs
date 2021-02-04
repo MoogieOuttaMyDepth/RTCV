@@ -39,7 +39,7 @@ namespace RTCV.UI
             set { _mtForm = value; }
         }
 
-        internal static BindingCollection HotkeyBindings = new BindingCollection();
+        public static BindingCollection HotkeyBindings = new BindingCollection();
 
         public static void Start(Form standaloneForm = null)
         {
@@ -342,7 +342,7 @@ namespace RTCV.UI
             }
         }
 
-        private static bool CheckHotkey(string trigger)
+        internal static bool CheckHotkey(string trigger)
         {
             logger.Info("Hotkey {trigger} pressed", trigger);
             switch (trigger)
@@ -418,6 +418,22 @@ namespace RTCV.UI
                         S.GET<GlitchHarvesterBlastForm>().loadBeforeOperation = false;
                         S.GET<GlitchHarvesterBlastForm>().Corrupt(null, null);
                         S.GET<GlitchHarvesterBlastForm>().loadBeforeOperation = isload;
+                    });
+                    break;
+
+                case "New Savestate":
+
+                    SyncObjectSingleton.FormExecute(() =>
+                    {
+                        S.GET<SavestateManagerForm>().savestateList.NewSavestateNow();
+                    });
+                    break;
+
+                case "Load Prev State":
+
+                    SyncObjectSingleton.FormExecute(() =>
+                    {
+                        S.GET<SavestateManagerForm>().savestateList.LoadPreviousSavestateNow();
                     });
                     break;
 

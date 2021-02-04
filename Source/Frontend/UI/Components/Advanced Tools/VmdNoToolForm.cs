@@ -22,41 +22,23 @@ namespace RTCV.UI
 
         private void btnNavigateToMyLists_Click(object sender, System.EventArgs e)
         {
-            //switch to My Lists
-            foreach (var item in UICore.mtForm.cbSelectBox.Items)
-            {
-                if (((dynamic)item).value is MyListsForm)
-                {
-                    UICore.mtForm.cbSelectBox.SelectedItem = item;
-                    break;
-                }
-            }
+            SettingsForm settingsform = S.GET<SettingsForm>();
+            DefaultGrids.settings.LoadToMain();
+            settingsform.SwitchToComponentForm(S.GET<MyListsForm>());
         }
 
         private void btnNavigateToMyVMDs_Click(object sender, System.EventArgs e)
         {
-            //switch to My VMDs
-            foreach (var item in UICore.mtForm.cbSelectBox.Items)
-            {
-                if (((dynamic)item).value is MyVMDsForm)
-                {
-                    UICore.mtForm.cbSelectBox.SelectedItem = item;
-                    break;
-                }
-            }
+            SettingsForm settingsform = S.GET<SettingsForm>();
+            DefaultGrids.settings.LoadToMain();
+            settingsform.SwitchToComponentForm(S.GET<MyVMDsForm>());
         }
 
         private void btnNavigateToMyPlugins_Click(object sender, System.EventArgs e)
         {
-            //switch to My Plugins
-            foreach (var item in UICore.mtForm.cbSelectBox.Items)
-            {
-                if (((dynamic)item).value is MyPluginsForm)
-                {
-                    UICore.mtForm.cbSelectBox.SelectedItem = item;
-                    break;
-                }
-            }
+            SettingsForm settingsform = S.GET<SettingsForm>();
+            DefaultGrids.settings.LoadToMain();
+            settingsform.SwitchToComponentForm(S.GET<MyPluginsForm>());
         }
 
         private void btnOpenPackageDownloader_Click(object sender, System.EventArgs e)
@@ -68,18 +50,10 @@ namespace RTCV.UI
             Process.Start(psi);
         }
 
-        private async void btnPrepareGlitchHarvester_MouseDown(object sender, MouseEventArgs e)
+        private void btnPrepareGlitchHarvester_MouseDown(object sender, MouseEventArgs e)
         {
             S.GET<CoreForm>().OpenGlitchHarvester(null, null);
-            var sm = S.GET<SavestateManagerForm>();
-            Control ctl = (sm.savestateList.flowPanel.Controls[0] as SavestateHolder).btnSavestate;
-            sm.savestateList.BtnSavestate_MouseDown(ctl, e);
-
-            if (sm.savestateList.btnSaveLoad.Text == "LOAD")
-                sm.savestateList.BtnToggleSaveLoad_Click(null, null);
-
-            sm.savestateList.HandleSaveLoadClick(null, null);
-
+            S.GET<SavestateManagerForm>().savestateList.NewSavestateNow();
         }
 
         private void lbDragAndDropGH_DragDrop(object sender, DragEventArgs e)

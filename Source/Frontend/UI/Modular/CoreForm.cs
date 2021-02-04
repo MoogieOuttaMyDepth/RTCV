@@ -168,27 +168,6 @@ This message only appears once.";
             //DefaultGrids.engineConfig.LoadToMain();
         }
 
-        internal void SetCustomLayoutName(string customLayoutPath)
-        {
-            string[] layoutFileData = File.ReadAllLines(customLayoutPath);
-
-            string gridNameLine = layoutFileData.FirstOrDefault(it => it.StartsWith("GridName:"));
-
-            if (gridNameLine == null)
-            {
-                return;
-            }
-
-            string[] parts = gridNameLine.Trim().Split(':');
-
-            if (parts.Length == 1 || string.IsNullOrWhiteSpace(parts[1]))
-            {
-                return;
-            }
-
-            btnOpenCustomLayout.Text = $"Load {parts[1]}";
-        }
-
         public void SetSize(int x, int y)
         {
             //this.Size = new Size(x + xPadding, y + yPadding + coreYPadding); //For Horizontal tab-style menu in coreform
@@ -248,9 +227,33 @@ This message only appears once.";
             cfForm.OpenSubForm(f, true);
         }
 
-        private void OpenCustomLayout(object sender, EventArgs e)
+        private void OpenCustomLayout(object sender, MouseEventArgs e)
         {
-            CanvasGrid.LoadCustomLayout();
+            var layouts = CanvasGrid.GetEnabledCustomLayouts();
+            if (layouts.Length == 0)
+            {
+                Point locate = e.GetMouseLocation(sender);
+
+                ContextMenuStrip openCustomLayoutMenu = new ContextMenuStrip();
+                var item = openCustomLayoutMenu.Items.Add($"No Custom Layouts loaded", null, new EventHandler((ob, ev) => CanvasGrid.LoadCustomLayout("")));
+                item.Enabled = false;
+                openCustomLayoutMenu.Show(this, locate);
+            }
+            else if (layouts.Length == 1)
+            {
+                CanvasGrid.LoadCustomLayout(layouts.First().FullName);
+            }
+            else
+            {
+                Point locate = e.GetMouseLocation(sender);
+
+                ContextMenuStrip openCustomLayoutMenu = new ContextMenuStrip();
+                foreach (var layout in layouts)
+                    openCustomLayoutMenu.Items.Add($"Load {layout.Name.Replace(layout.Extension, "")}", null, new EventHandler((ob, ev) => CanvasGrid.LoadCustomLayout(layout.FullName)));
+
+                openCustomLayoutMenu.Show(this, locate);
+
+            }
         }
 
         private void PrepareLockSideBar()
@@ -303,13 +306,14 @@ This message only appears once.";
 
         private void OnAutoKillSwitchButtonMouseHover(object sender, EventArgs e)
         {
-            lbAks.ForeColor = Color.FromArgb(32, 32, 32);
-            pnAutoKillSwitch.BackColor = Color.Salmon;
+            //lbAks.ForeColor = Color.FromArgb(32, 32, 32);
+            //pnAutoKillSwitch.BackColor = BackColor.ChangeColorBrightness(-0.10f);
+            pnAutoKillSwitch.BackColor = Color.Red.ChangeColorBrightness(-0.80f);
         }
 
         private void OnAutoKillSwitchButtonMouseLeave(object sender, EventArgs e)
         {
-            lbAks.ForeColor = Color.White;
+            //lbAks.ForeColor = Color.White;
             pnAutoKillSwitch.BackColor = Color.Transparent;
         }
 
@@ -317,7 +321,14 @@ This message only appears once.";
         {
             pnGlitchHarvesterOpen.Visible = true;
 
-            DefaultGrids.glitchHarvester.LoadToNewWindow("Glitch Harvester");
+            if (Params.IsParamSet("GH_OPEN_MAIN"))
+            {
+                DefaultGrids.glitchHarvester.LoadToMain();
+            }
+            else
+            {
+                DefaultGrids.glitchHarvester.LoadToNewWindow("Glitch Harvester");
+            }
         }
 
         public void StartAutoCorrupt(object sender, EventArgs e)
@@ -606,8 +617,11 @@ This message only appears once.";
             S.GET<GlitchHarvesterBlastForm>().SendRawToStash(null, null);
         }
 
-        private void OnManualBlastMouseDown(object sender, MouseEventArgs e)
+        public void btnManualBlast_MouseDown(object sender, MouseEventArgs e)
         {
+            if (e == null)
+                e = new MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0);
+
             if (e.Button == MouseButtons.Right)
             {
                 ContextMenuStrip columnsMenu = new ContextMenuStrip();
@@ -662,11 +676,6 @@ This message only appears once.";
             settingsRightClickTimer = 0;
         }
 
-        private void OnTestLockdownClick(object sender, EventArgs e)
-        {
-            UICore.LockInterface();
-            DefaultGrids.connectionStatus.LoadToMain();
-        }
 
         private void OnGlitchHarvesterMouseDown(object sender, MouseEventArgs e)
         {
@@ -680,13 +689,34 @@ This message only appears once.";
                     BlastEditorForm.OpenBlastEditor();
                 }));
 
+                var ghmain = (columnsMenu.Items.Add("Open the Glitch Harvester to Main Window", null, new EventHandler((ob, ev) =>
+                {
+                    if (Params.IsParamSet("GH_OPEN_MAIN"))
+                    {
+                        Params.RemoveParam("GH_OPEN_MAIN");
+                    }
+                    else
+                    {
+                        Params.SetParam("GH_OPEN_MAIN");
+                    }
+                })) as ToolStripMenuItem);
+
+                ghmain.Checked = Params.IsParamSet("GH_OPEN_MAIN");
+
                 columnsMenu.Show(this, locate);
             }
         }
 
-        private void TestCommand(object sender, EventArgs e)
+        private void pnCrashProtection_MouseEnter(object sender, EventArgs e) => pnCrashProtection_MouseHover(sender, e);
+        private void pnCrashProtection_MouseHover(object sender, EventArgs e)
         {
-            LocalNetCoreRouter.Route(NetCore.Endpoints.CorruptCore, "TEST");
+            pnCrashProtection.BackColor = BackColor.ChangeColorBrightness(-0.10f);
         }
+
+        private void pnCrashProtection_MouseLeave(object sender, EventArgs e)
+        {
+            pnCrashProtection.BackColor = Color.Transparent;
+        }
+
     }
 }
